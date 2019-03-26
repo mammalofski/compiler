@@ -44,13 +44,16 @@ class TokenFinder:
     def find_tokens(self, string):
         start = 0
         row = 1
-        col = 1
+        col = 0
         block_no = 1
         block_indentation = 0
         all_words = []
+        # parse through the string
         for i, char in enumerate(string):
             if char in end_word_chars or char in symbols:
 
+                col += 1
+                # look for new lines, tabs and fix indentation
                 if char == '\n':
                     row += 1
                     col = 1
@@ -61,14 +64,14 @@ class TokenFinder:
                 end = i
                 current_word = string[start:end]
                 start = end + 1
+
                 if current_word in end_word_chars or current_word == '':
                     continue
-                # print(current_word)
+
                 all_words.append(current_word)
 
                 for keyword in keyword_templates:
                     token = keyword.match(current_word, start, row, col, block_no, block_indentation)
-                    # print(token)
                     if token and token.value is not None:
                         self.tokens.append(token)
                         break
@@ -90,12 +93,9 @@ class TokenFinder:
 
 
 if __name__ == "__main__":
-    string = """
-    for i in range(10):
-        if i > 5 :
-            print(i)
-    """
+    string = """for i in range(10):\n\tif i > 5 :\n\t\tprint(i)"""
 
     tf = TokenFinder()
     tokens = tf.find_tokens(string)
-    print(tokens)
+    for token in tokens:
+        print(token.name, token.value, token.starting_col, token.starting_row, token.block_no, token.block_indentation)

@@ -15,30 +15,22 @@ class Token:
 
 
 class TokenTemplate:
-    # name = Name of produced token, lowercase
-    # regexp = Regular expression recognizing the token
-    # process = Lambda function for processing the string into the token value
     def __init__(self, name, regexp, process=None):
         self.name = name
         r = re.compile(regexp)
         self.regexp = r
         self.process = process
 
-    # Returns first token from string [start]
     def match(self, string, start, row, col, block_no, block_indentation):
-        # create re.match object with string
+        # check if string matches current template
         matched = self.regexp.match(string)
-        # return False if nothing matches
         if not matched:
             return False
-        # Keep track of where the token ends so it can be used as the start position again
-        # end = matched.end()
-        # If the token has a process, process the value. Otherwise, keep the matched string.
+        # generate the value
         if self.process:
             value = self.process(matched.group())
         else:
             value = matched.group()
-        # Make a new token with extracted args if it matches correctly
         return Token(self.name, value, col, row, block_no, block_indentation)
 
 
