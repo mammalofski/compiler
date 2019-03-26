@@ -29,7 +29,6 @@ class TokenTemplate:
         # create re.match object with string
         matched = self.regexp.match(string)
         # return False if nothing matches
-        print(matched)
         if not matched:
             return False
         # Keep track of where the token ends so it can be used as the start position again
