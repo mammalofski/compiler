@@ -66,25 +66,25 @@ class TokenFinder:
                 # print(current_word)
                 all_words.append(current_word)
 
-        print(all_words)
-        parsed_words = []
-        for word in all_words:
-            for keyword in keyword_templates:
-                token = keyword.match(word, start, row, col, block_no, block_indentation)
-                # print(token)
-                if token and token.value is not None:
-                    self.tokens.append(token)
-                    parsed_words.append(word)
-                    break
+                for keyword in keyword_templates:
+                    token = keyword.match(current_word, start, row, col, block_no, block_indentation)
+                    # print(token)
+                    if token and token.value is not None:
+                        self.tokens.append(token)
+                        break
 
-        rest_of_the_words = set(all_words) - set(parsed_words)
-        for word in list(rest_of_the_words):
-            for keyword in lexer:
-                token = keyword.match(word, start, row, col, block_no, block_indentation)
-                # print(token)
-                if token and token.value is not None:
-                    self.tokens.append(token)
-                    break
+                for keyword in lexer:
+                    token = keyword.match(current_word, start, row, col, block_no, block_indentation)
+
+                    if token and token.value is not None:
+                        parsed_token = None
+                        for keyword in keyword_templates:
+                            parsed_token = keyword.match(current_word, start, row, col, block_no, block_indentation)
+                            if parsed_token:
+                                break
+                        if not parsed_token:
+                            self.tokens.append(token)
+                            break
 
         return self.tokens
 
